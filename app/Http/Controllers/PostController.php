@@ -34,12 +34,17 @@ class PostController extends Controller
     {
         $this->authorize('create', Post::class);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',            'is_public' => 'required|boolean',
-            'tags' => 'sometimes|array',
-            'tags.*' => 'string',
-        ]);
+        $validated = $request->validate(
+            [
+                'title'     => 'required|string|max:255',
+                'content'   => 'required|string',
+                'is_public' => 'required|boolean',
+                'tags'      => 'sometimes|array',
+                'tags.*'    => 'string',
+            ]
+        );
+
+        $validated['slug'] = Str::slug($validated['title']);
 
         $post = auth()->user()->posts()->create($validated);
 
@@ -58,12 +63,12 @@ class PostController extends Controller
         $this->authorize('update', $post);
 
         $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'content' => 'sometimes|string',
-            'is_public' => 'sometimes|boolean',
-            'tags' => 'sometimes|array',
-            'tags.*' => 'string',
-        ]);
+                                            'title'     => 'sometimes|string|max:255',
+                                            'content'   => 'sometimes|string',
+                                            'is_public' => 'sometimes|boolean',
+                                            'tags'      => 'sometimes|array',
+                                            'tags.*'    => 'string',
+                                        ]);
 
         $post->update($validated);
 

@@ -4,12 +4,18 @@ import Post from './components/Post.vue';
 import Login from './components/Login.vue';
 import EditPost from './components/EditPost.vue';
 import Register from './components/Register.vue';
+import CreatePost from './components/CreatePost.vue';
 
 const routes = [
   {
     path: '/',
     name: 'posts',
     component: Posts,
+  },
+  {
+    path: '/posts/create',
+    name: 'create-post',
+    component: CreatePost,
   },
   {
     path: '/posts/:slug',
