@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800">Blog Posts</h1>
+        <h1 class="text-4xl font-bold text-white">Blog Posts</h1>
         <div class="flex space-x-2">
             <button @click="filter = 'all'" :class="{ 'bg-indigo-600 text-white': filter === 'all', 'bg-gray-200 text-gray-800': filter !== 'all' }" class="px-4 py-2 rounded-md transition-colors duration-300">All Posts</button>
             <button @click="filter = 'following'" :class="{ 'bg-indigo-600 text-white': filter === 'following', 'bg-gray-200 text-gray-800': filter !== 'following' }" class="px-4 py-2 rounded-md transition-colors duration-300">Following</button>
@@ -24,14 +24,14 @@
         </div>
       </div>
       <div class="flex justify-between items-center mt-8">
-        <button 
-          @click="loadPosts(posts.prev_page_url)" 
+        <button
+          @click="loadPosts(posts.prev_page_url)"
           :disabled="!posts.prev_page_url"
           class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300">
           Previous
         </button>
-        <button 
-          @click="loadPosts(posts.next_page_url)" 
+        <button
+          @click="loadPosts(posts.next_page_url)"
           :disabled="!posts.next_page_url"
           class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300">
           Next
@@ -57,7 +57,7 @@ const loadPosts = (url = null) => {
       fetchPosts(urlObject.toString());
       return;
   }
-  
+
   let apiUrl = '/api/posts';
   if (filter.value === 'following') {
     apiUrl = '/api/posts?following=true';
