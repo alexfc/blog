@@ -13,6 +13,7 @@
           <p class="text-gray-600 mt-2">By {{ post.user.name }}</p>
         </div>
         <router-link v-if="auth.user && auth.user.id === post.user_id" :to="{ name: 'edit-post', params: { slug: post.slug } }" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit Post</router-link>
+        <button v-if="auth.user && auth.user.id === post.user_id" @click="deletePost" class="ml-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete Post</button>
       </div>
       
       <button v-if="auth.user && auth.user.id !== post.user_id" @click="toggleFollow" class="mb-4 px-4 py-2 rounded-md text-white transition-colors duration-300" :class="post.user.is_following ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'">
@@ -70,7 +71,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import PostAccessManagement from './PostAccessManagement.vue';
 import { useAuthStore } from '../stores/auth';
 
@@ -80,6 +81,7 @@ const error = ref(null);
 const comments = ref([]);
 const newComment = ref('');
 const route = useRoute();
+const router = useRouter();
 const auth = useAuthStore();
 
 const postId = computed(() => post.value ? post.value.id : null);
@@ -185,6 +187,28 @@ const requestAccess = async () => {
     } catch (e) {
         console.error('Error requesting access:', e);
     }
+};
+
+const deletePost = async () => {
+  if (confirm('Are you sure you want to delete this post?')) {
+    try {
+      const response = await fetch(`/api/posts/${post.value.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${auth.token}`,
+          'Accept': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        router.push({ name: 'posts' }); // Redirect to posts list after deletion
+      } else {
+        console.error('Error deleting post:', response.statusText);
+      }
+    } catch (e) {
+      console.error('Error deleting post:', e);
+    }
+  }
 };
 
 onMounted(fetchPost);

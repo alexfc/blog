@@ -151,4 +151,13 @@ class PostController extends Controller
 
         return response()->json($post->load('tags'));
     }
+
+    public function destroy(Post $post)
+    {
+        $this->authorize('delete', $post);
+
+        $post->delete();
+
+        return response()->json(['message' => 'Post deleted successfully']);
+    }
 }
