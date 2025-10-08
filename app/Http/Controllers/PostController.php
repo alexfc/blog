@@ -9,11 +9,16 @@ use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::where('is_public', true)
-            ->orderBy('published_at', 'desc')
-            ->paginate(5);
+        $query = Post::where('is_public', true);
+
+        if ($request->boolean('following') && auth()->check()) {
+            $followedUserIds = auth()->user()->following()->pluck('users.id');
+            $query->whereIn('user_id', $followedUserIds);
+        }
+
+        $posts = $query->orderBy('published_at', 'desc')->paginate(5);
 
         return response()->json($posts);
     }

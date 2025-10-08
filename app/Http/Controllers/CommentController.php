@@ -20,4 +20,9 @@ class CommentController extends Controller
 
         return response()->json($comment->load('user'));
     }
+
+    public function postComments(Post $post)
+    {
+        return response()->json($post->comments()->with('user')->latest()->get());
+    }
 }

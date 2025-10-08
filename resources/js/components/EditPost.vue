@@ -1,26 +1,32 @@
 <template>
-  <div>
-    <h1>Edit Post</h1>
-    <form @submit.prevent="updatePost">
-      <div>
-        <label for="title">Title</label>
-        <input type="text" id="title" v-model="post.title" required>
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-center text-gray-800">Edit Post</h1>
+    <form @submit.prevent="updatePost" class="max-w-2xl mx-auto bg-white p-8 shadow-lg rounded-lg">
+      <div class="mb-6">
+        <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+        <input type="text" id="title" v-model="post.title" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
       </div>
-      <div>
-        <label for="content">Content</label>
-        <textarea id="content" v-model="post.content" required></textarea>
+      <div class="mb-6">
+        <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
+        <textarea id="content" v-model="post.content" required rows="10" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
       </div>
-      <div>
-        <label for="tags">Tags (comma separated)</label>
-        <input type="text" id="tags" v-model="tags">
+      <div class="mb-6">
+        <label for="tags" class="block text-gray-700 text-sm font-bold mb-2">Tags (comma separated)</label>
+        <input type="text" id="tags" v-model="tags" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
       </div>
-      <div>
-        <label for="is_public">Public</label>
-        <input type="checkbox" id="is_public" v-model="post.is_public">
+      <div class="mb-6 flex items-center">
+        <input type="checkbox" id="is_public" v-model="post.is_public" class="mr-2 leading-tight">
+        <label for="is_public" class="text-sm text-gray-700">Public</label>
       </div>
-      <button type="submit">Update</button>
+      <div class="flex items-center justify-between">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Update
+        </button>
+      </div>
     </form>
-    <div v-if="error">{{ error }}</div>
+    <div v-if="error" class="mt-4 text-center text-red-500">
+      <p>An error occurred: {{ error }}</p>
+    </div>
   </div>
 </template>
 

@@ -1,39 +1,53 @@
 <template>
-  <div>
-    <div v-if="loading">Loading...</div>
-    <div v-if="error">{{ error }}</div>
-    <div v-if="post">
-      <router-link v-if="auth.user && auth.user.id === post.user_id" :to="{ name: 'edit-post', params: { slug: post.slug } }">Edit Post</router-link>
-      <h1>{{ post.title }}</h1>
-      <p>By {{ post.user.name }}</p>
-      <button v-if="auth.user && auth.user.id !== post.user_id" @click="toggleFollow">
+  <div class="container mx-auto px-4 py-8">
+    <div v-if="loading" class="text-center text-gray-500">
+      <p>Loading...</p>
+    </div>
+    <div v-if="error" class="text-center text-red-500">
+      <p>An error occurred: {{ error }}</p>
+    </div>
+    <div v-if="post" class="max-w-4xl mx-auto bg-white p-8 shadow-lg rounded-lg">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h1 class="text-4xl font-bold text-gray-900">{{ post.title }}</h1>
+          <p class="text-gray-600 mt-2">By {{ post.user.name }}</p>
+        </div>
+        <router-link v-if="auth.user && auth.user.id === post.user_id" :to="{ name: 'edit-post', params: { slug: post.slug } }" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit Post</router-link>
+      </div>
+      
+      <button v-if="auth.user && auth.user.id !== post.user_id" @click="toggleFollow" class="mb-4 px-4 py-2 rounded-md text-white transition-colors duration-300" :class="post.user.is_following ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'">
         {{ post.user.is_following ? 'Unfollow' : 'Follow' }}
       </button>
-      <p>{{ post.content }}</p>
 
-      <div v-if="post.tags && post.tags.length > 0">
-        <strong>Tags:</strong>
-        <ul>
-          <li v-for="tag in post.tags" :key="tag.id">{{ tag.name }}</li>
+      <div class="prose max-w-none text-gray-800">
+        <p>{{ post.content }}</p>
+      </div>
+
+      <div v-if="post.tags && post.tags.length > 0" class="mt-6">
+        <strong class="text-gray-800">Tags:</strong>
+        <ul class="flex space-x-2 mt-2">
+          <li v-for="tag in post.tags" :key="tag.id" class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm">{{ tag.name }}</li>
         </ul>
       </div>
 
-      <hr>
+      <hr class="my-8">
 
-      <h3>Comments</h3>
-      <div v-if="auth.user">
-        <textarea v-model="newComment" placeholder="Add a comment"></textarea>
-        <button @click="addComment">Add Comment</button>
-      </div>
-      <div v-else>
-        <p>You must be logged in to comment. <router-link to="/login">Log in</router-link></p>
-      </div>
+      <div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">Comments</h3>
+        <div v-if="auth.user" class="mb-6">
+          <textarea v-model="newComment" placeholder="Add a comment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="4"></textarea>
+          <button @click="addComment" class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Comment</button>
+        </div>
+        <div v-else class="text-center text-gray-600">
+          <p>You must be logged in to comment. <router-link to="/login" class="text-indigo-600 hover:underline">Log in</router-link></p>
+        </div>
 
-      <ul>
-        <li v-for="comment in comments" :key="comment.id">
-          <strong>{{ comment.user.name }}</strong>: {{ comment.content }}
-        </li>
-      </ul>
+        <ul class="space-y-4">
+          <li v-for="comment in comments" :key="comment.id" class="bg-gray-50 p-4 rounded-lg shadow">
+            <p class="text-gray-800"><strong>{{ comment.user.name }}</strong>: {{ comment.content }}</p>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>

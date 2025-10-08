@@ -18,23 +18,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('/posts', [PostController::class, 'store']);
+    Route::put('/posts/{post}', [PostController::class, 'update']);
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+    Route::post('/users/{user}/follow', [FollowController::class, 'follow']);
+    Route::post('/users/{user}/unfollow', [FollowController::class, 'unfollow']);
 });
-
-Route::middleware('auth:sanctum')->post('/posts', [PostController::class, 'store']);
-Route::middleware('auth:sanctum')->put('/posts/{post}', [PostController::class, 'update']);
-Route::middleware('auth:sanctum')->post('/posts/{post}/comments', [CommentController::class, 'store']);
-
-Route::middleware('auth:sanctum')->post('/users/{user}/follow', [FollowController::class, 'follow']);
-Route::middleware('auth:sanctum')->post('/users/{user}/unfollow', [FollowController::class, 'unfollow']);
 
 Route::group(['middleware' => 'web'], function () {
     Route::get('/posts', [PostController::class, 'index']);
     Route::get('/posts/{post:slug}', [PostController::class, 'show']);
-    Route::get('/posts/{post}/comments', function (Post $post) {
-        return response()->json($post->comments()->with('user')->latest()->get());
-    });
+    Route::get('/posts/{post}/comments', [CommentController::class, 'postComments']);
 });
 
 

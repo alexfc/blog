@@ -19,10 +19,33 @@ export function usePosts() {
     }
   };
 
+  const createPost = async (post, tags, token) => {
+    const response = await fetch('/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        ...post,
+        tags: tags.split(',').map(tag => tag.trim()),
+      }),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else {
+      const data = await response.json();
+      throw new Error(data.message || 'Create failed.');
+    }
+  };
+
   return {
     posts,
     loading,
     error,
     fetchPosts,
+    createPost,
   };
 }
