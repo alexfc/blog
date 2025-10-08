@@ -21,7 +21,8 @@ class PostPolicy
      */
     public function view(User $user, Post $post): bool
     {
-        //
+        // This policy is no longer needed as access control is handled in PostController@show
+        return true;
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostAccessController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\PostController;
@@ -27,6 +28,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
     Route::post('/users/{user}/follow', [FollowController::class, 'follow']);
     Route::post('/users/{user}/unfollow', [FollowController::class, 'unfollow']);
+
+    Route::post('/posts/{post}/request-access', [PostAccessController::class, 'requestAccess']);
+    Route::post('/post-access-requests/{accessRequest}/approve', [PostAccessController::class, 'approveAccess']);
+    Route::post('/post-access-requests/{accessRequest}/deny', [PostAccessController::class, 'denyAccess']);
+    Route::get('/posts/{post}/access-requests', [PostAccessController::class, 'listRequests']);
 });
 
 Route::group(['middleware' => 'web'], function () {

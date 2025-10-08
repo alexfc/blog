@@ -19,8 +19,23 @@
         {{ post.user.is_following ? 'Unfollow' : 'Follow' }}
       </button>
 
-      <div class="prose max-w-none text-gray-800">
+      <div v-if="post.can_view_content" class="prose max-w-none text-gray-800">
         <p>{{ post.content }}</p>
+      </div>
+      <div v-else>
+        <div v-if="!auth.user" class="text-center text-gray-600">
+            <p>This is a private post. Please <router-link to="/login" class="text-indigo-600 hover:underline">log in</router-link> to request access.</p>
+        </div>
+        <div v-else-if="post.access_request_status === 'none'" class="text-center">
+            <p class="text-gray-600">This post is private. You can request access from the author.</p>
+            <button @click="requestAccess" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Request Access</button>
+        </div>
+        <div v-else-if="post.access_request_status === 'pending'" class="text-center text-gray-600">
+            <p>Your access request is pending approval from the author.</p>
+        </div>
+        <div v-else-if="post.access_request_status === 'denied'" class="text-center text-red-500">
+            <p>Your access request has been denied by the author.</p>
+        </div>
       </div>
 
       <div v-if="post.tags && post.tags.length > 0" class="mt-6">
@@ -32,7 +47,7 @@
 
       <hr class="my-8">
 
-      <div>
+      <div v-if="post.can_view_content">
         <h3 class="text-2xl font-bold text-gray-900 mb-4">Comments</h3>
         <div v-if="auth.user" class="mb-6">
           <textarea v-model="newComment" placeholder="Add a comment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="4"></textarea>
@@ -49,12 +64,14 @@
         </ul>
       </div>
     </div>
+    <PostAccessManagement v-if="auth.user && post && auth.user.id === post.user_id" :post="post" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import PostAccessManagement from './PostAccessManagement.vue';
 import { useAuthStore } from '../stores/auth';
 
 const post = ref(null);
@@ -79,7 +96,9 @@ const fetchPost = async () => {
     });
     if (response.ok) {
       post.value = await response.json();
-      await fetchComments();
+      if (post.value.can_view_content) {
+        await fetchComments();
+      }
     } else {
       error.value = 'Post not found.';
     }
@@ -148,6 +167,23 @@ const toggleFollow = async () => {
         }
     } catch (e) {
         console.error('Error toggling follow:', e);
+    }
+};
+
+const requestAccess = async () => {
+    try {
+        const response = await fetch(`/api/posts/${post.value.id}/request-access`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${auth.token}`,
+                'Accept': 'application/json',
+            },
+        });
+        if (response.ok) {
+            await fetchPost(); // Refresh post data
+        }
+    } catch (e) {
+        console.error('Error requesting access:', e);
     }
 };
 

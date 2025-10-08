@@ -19,7 +19,8 @@
           <router-link :to="{ name: 'post', params: { slug: post.slug } }" class="block">
             <h2 class="text-2xl font-bold text-gray-900 hover:text-indigo-600 transition-colors duration-300">{{ post.title }}</h2>
           </router-link>
-          <p class="text-gray-700 mt-4">{{ post.content }}</p>
+          <p v-if="post.can_view_content" class="text-gray-700 mt-4">{{ post.content }}</p>
+          <p v-else class="text-gray-500 mt-4">This post is private.</p>
         </div>
       </div>
       <div class="flex justify-between items-center mt-8">

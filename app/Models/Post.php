@@ -40,6 +40,11 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function accessRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PostAccessRequest::class);
+    }
+
     /**
      * The tags that belong to the post.
      */
